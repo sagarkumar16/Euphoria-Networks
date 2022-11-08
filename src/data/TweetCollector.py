@@ -1,12 +1,7 @@
-import os
-import pandas as pd
 import json
-import csv
+import os
 import requests
-import datetime
-import dateutil.parser
-import unicodedata
-import time
+
 
 
 def create_url(keyword, start_date, end_date, max_results = 10):
@@ -65,8 +60,14 @@ class TweetCollector:
 
         self.url = create_url(keyword, start_time,end_time, max_results)
 
-    def __call__(self):
-        return connect_to_endpoint(self.url[0], self.headers, self.url[1])
+    def __call__(self,
+                 save_file: "filepath to save output as json"):
+        json_return = connect_to_endpoint(self.url[0], self.headers, self.url[1])
+
+        tweet_json = json.dumps(json_return, indent=4)
+
+        with open(save_file, 'w') as outfile:
+            outfile.write(tweet_json)
 
 
 
