@@ -4,11 +4,10 @@ import requests
 
 
 
-def create_url(keyword, start_date, end_date, max_results = 10):
+def create_url(keyword, start_date, end_date, max_results):
 
-    search_url = "https://api.twitter.com/2/tweets/search/all" #Change to the endpoint you want to collect data from
+    search_url = "https://api.twitter.com/2/tweets/search/all"
 
-    #change params based on the endpoint you are using
     query_params = {'query': keyword,
                     'start_time': start_date,
                     'end_time': end_date,
