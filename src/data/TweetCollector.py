@@ -2,13 +2,37 @@ import json
 import os
 import requests
 
+'''
+Code from "An Extensive Guide to collecting tweets from Twitter API v2 for academic research using Python 3" by Andrew 
+Edward (https://andrew37edward.medium.com/) which was formatted for use in this project and package by Sagar Kumar.
+'''
 
 
-def create_url(keyword, start_date, end_date, max_results):
 
-    search_url = "https://api.twitter.com/2/tweets/search/all"
+def create_url_kw(keyword, endpoint, start_date, end_date, max_results):
+
+    search_url = "https://api.twitter.com/2/" + endpoint
+
+
 
     query_params = {'query': keyword,
+                    'start_time': start_date,
+                    'end_time': end_date,
+                    'max_results': max_results,
+                    'expansions': 'author_id,in_reply_to_user_id,geo.place_id',
+                    'tweet.fields': 'id,text,author_id,in_reply_to_user_id,geo,conversation_id,created_at,lang,public_metrics,referenced_tweets,reply_settings,source',
+                    'user.fields': 'id,name,username,created_at,description,public_metrics,verified',
+                    'place.fields': 'full_name,id,country,country_code,geo,name,place_type',
+                    'next_token': {}}
+
+    return search_url, query_params
+
+
+def create_url_id(ids, endpoint, start_date, end_date, max_results):
+
+    search_url = "https://api.twitter.com/2/" + endpoint
+
+    query_params = {'ids': ids,
                     'start_time': start_date,
                     'end_time': end_date,
                     'max_results': max_results,
@@ -38,12 +62,17 @@ def create_headers(bearer_token):
 class TweetCollector:
 
     def __init__(self,
-                 keyword: "keyword to search the API for",
+                 endpoint: "string of API endpoint to be used ('tweets/search/all', '/users/:id/tweets', etc)",
                  start_date: "start date in format YYYY-MM-DD",
                  end_date: "end date in format YYYY-MM-DD",
-                 max_results: "Maximum number of results to collect"
+                 max_results: "Maximum number of results to collect",
+                 keyword: "keyword to search the API for" = None,
+                 ids: "Tweet or User IDs to collect" = None
                  ):
         self.auth = os.getenv('TOKEN')
+
+        self.endpoint = endpoint
+
         self.start_date = start_date+"T00:00:00.000Z"
         self.end_date = end_date+"T00:00:00.000Z"
 
@@ -55,9 +84,15 @@ class TweetCollector:
 
         start_time = self.start_date
         end_time = self.end_date
+
         max_results = max_results
 
-        self.url = create_url(keyword, start_time,end_time, max_results)
+        if keyword is not None:
+
+            self.url = create_url_kw(keyword, endpoint, start_time,end_time, max_results)
+
+        elif ids is not None:
+            self.url = create_url_id(ids, endpoint, start_time, end_time, max_results)
 
     def __call__(self,
                  save_file: "filepath to save output as json"):
@@ -65,8 +100,10 @@ class TweetCollector:
 
         tweet_json = json.dumps(json_return, indent=4)
 
-        with open(save_file, 'w') as outfile:
+        with open(save_file, 'a') as outfile:
             outfile.write(tweet_json)
+
+
 
 
 
