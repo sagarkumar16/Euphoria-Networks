@@ -89,7 +89,7 @@ class TweetCollector:
 
         if keyword is not None:
 
-            self.url = create_url_kw(keyword, endpoint, start_time,end_time, max_results)
+            self.url = create_url_kw(keyword, endpoint, start_time, end_time, max_results)
 
         elif ids is not None:
             self.url = create_url_id(ids, endpoint, start_time, end_time, max_results)
