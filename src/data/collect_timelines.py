@@ -1,23 +1,10 @@
 from TweetCollector import TweetCollector
+import unpack
 import pandas as pd
 import os
 import time
 from tqdm import tqdm
 import os
-
-
-def unpack(file):
-
-    '''
-    :param file: string to designate folder in a set path
-
-    unpack() unpacks the json output of twitter as it was output by the function collect_users()
-    '''
-
-    with open(f'/data_users1/sagar/Euphoria-Project/{file}/responses.json', 'r') as f:
-        txt = f.read()
-        new_txt = txt.replace('}{', '},{')
-        return json.loads(f'[{new_txt}]')
 
 
 def collect_timelines():
@@ -78,13 +65,15 @@ def collect_timelines():
             query = TweetCollector('users/:id/tweets',
                                    start_date=start_str,
                                    end_date=end_str,
-                                   max_results=100,
+                                   max_results=25,
                                    ids=u)
 
             top_gun_timelines = query('/data_users1/sagar/Euphoria-Project/top_gun_tweets/timelines.json')
 
             week += 1
             time.sleep(1)
+
+    time.sleep(1)
 
     for u in iter_eu_users:
 
@@ -100,7 +89,7 @@ def collect_timelines():
             query = TweetCollector('users/:id/tweets',
                                    start_date=start_str,
                                    end_date=end_str,
-                                   max_results=100,
+                                   max_results=25,
                                    ids=u)
 
             top_gun_timelines = query('/data_users1/sagar/Euphoria-Project/euphoria_tweets/timelines.json')
@@ -108,5 +97,6 @@ def collect_timelines():
             week += 1
             time.sleep(1)
 
-
+# run
+collect_timelines()
 
