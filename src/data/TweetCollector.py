@@ -73,8 +73,8 @@ class TweetCollector:
 
         self.endpoint = endpoint
 
-        self.start_date = start_date+"T00:00:00.000Z"
-        self.end_date = end_date+"T00:00:00.000Z"
+        self.start_date = start_date
+        self.end_date = end_date
 
         bearer_token = self.auth
 
