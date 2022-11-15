@@ -5,6 +5,7 @@ import os
 import time
 from tqdm import tqdm
 import os
+import datetime
 
 
 def collect_timelines():
@@ -67,7 +68,7 @@ def collect_timelines():
             end = start_tg + datetime.timedelta(weeks=1)
             end_str = end.strftime("%Y-%m-%dT%H:%M:%S%zZ")
 
-            query = TweetCollector('users/:id/tweets',
+            query = TweetCollector('tweets',
                                    start_date=start_str,
                                    end_date=end_str,
                                    max_results=25,
@@ -92,7 +93,7 @@ def collect_timelines():
             end = start_eu + datetime.timedelta(weeks=1)
             end_str = end.strftime("%Y-%m-%dT%H:%M:%S%zZ")
 
-            query = TweetCollector('users/:id/tweets',
+            query = TweetCollector('tweets',
                                    start_date=start_str,
                                    end_date=end_str,
                                    max_results=25,

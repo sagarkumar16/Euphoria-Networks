@@ -30,7 +30,7 @@ def create_url_kw(keyword, endpoint, start_date, end_date, max_results):
 
 def create_url_id(ids, endpoint, start_date, end_date, max_results):
 
-    search_url = "https://api.twitter.com/2/" + endpoint
+    search_url = f"https://api.twitter.com/2/users/{ids}/" + endpoint
 
     query_params = {'id': ids,
                     'start_time': start_date,
