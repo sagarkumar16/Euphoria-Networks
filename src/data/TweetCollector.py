@@ -32,8 +32,7 @@ def create_url_id(ids, endpoint, start_date, end_date, max_results):
 
     search_url = f"https://api.twitter.com/2/users/{ids}/" + endpoint
 
-    query_params = {'id': ids,
-                    'start_time': start_date,
+    query_params = {'start_time': start_date,
                     'end_time': end_date,
                     'max_results': max_results,
                     'expansions': 'author_id,in_reply_to_user_id,geo.place_id',
