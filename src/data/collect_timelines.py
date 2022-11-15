@@ -10,12 +10,16 @@ import os
 def collect_timelines():
 
     '''
+    :return: None
+    '''
+
+    """
     collect_timelines() is meant to be run after having a collection of tweets for both shock-related keyword searches.
     This function unpacks the output of those functions and extracts a set of users from which it iteratively collects
     timelines.
 
     The function collects a maximum of 25 tweets/user/week.
-    '''
+    """
 
     keys = pd.read_csv('/home/sagar/keys/twitter-keys.csv')
     os.environ['TOKEN'] = keys['BEARER_TOKEN'][0]
@@ -55,9 +59,10 @@ def collect_timelines():
 
         start_tg = datetime.date(2022,4,15)
 
-        week = 1
-        while week <= 12:
+        week = 0
+        while week < 12:
 
+            start_tg = start_tg + datetime.timedelta(weeks=week)
             start_str = start_tg.strftime("%Y-%m-%dT%H:%M:%S%zZ")
             end = start_tg + datetime.timedelta(weeks=1)
             end_str = end.strftime("%Y-%m-%dT%H:%M:%S%zZ")
@@ -77,13 +82,14 @@ def collect_timelines():
 
     for u in iter_eu_users:
 
-        start_tg = datetime.date(2022,4,15)
+        start_eu = datetime.date(2022,1,2)
 
-        week = 1
-        while week <= 12:
+        week = 0
+        while week < 12:
 
-            start_str = start_tg.strftime("%Y-%m-%dT%H:%M:%S%zZ")
-            end = start_tg + datetime.timedelta(weeks=1)
+            start_eu = start_eu + datetime.timedelta(weeks=week)
+            start_str = start_eu.strftime("%Y-%m-%dT%H:%M:%S%zZ")
+            end = start_eu + datetime.timedelta(weeks=1)
             end_str = end.strftime("%Y-%m-%dT%H:%M:%S%zZ")
 
             query = TweetCollector('users/:id/tweets',
@@ -92,7 +98,7 @@ def collect_timelines():
                                    max_results=25,
                                    ids=u)
 
-            top_gun_timelines = query('/data_users1/sagar/Euphoria-Project/euphoria_tweets/timelines.json')
+            euphoria_timelines = query('/data_users1/sagar/Euphoria-Project/euphoria_tweets/timelines.json')
 
             week += 1
             time.sleep(1)

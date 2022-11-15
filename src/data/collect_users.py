@@ -5,6 +5,7 @@ import time
 from tqdm import tqdm
 import os
 
+# TODO: add docstrings
 
 # search_string: takes a list of keywords and hashtags and creates a search string from it
 def search_string(l: "list of keywords or hashtags"):

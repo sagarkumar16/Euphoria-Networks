@@ -2,12 +2,12 @@ import json
 import os
 import requests
 
-'''
+"""
 Code from "An Extensive Guide to collecting tweets from Twitter API v2 for academic research using Python 3" by Andrew 
 Edward (https://andrew37edward.medium.com/) which was formatted for use in this project and package by Sagar Kumar.
-'''
+"""
 
-
+# TODO: add docstrings
 
 def create_url_kw(keyword, endpoint, start_date, end_date, max_results):
 
