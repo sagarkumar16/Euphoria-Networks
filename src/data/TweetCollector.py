@@ -1,6 +1,7 @@
 import json
 import os
 import requests
+import time
 
 """
 Code from "An Extensive Guide to collecting tweets from Twitter API v2 for academic research using Python 3" by Andrew 
@@ -50,6 +51,11 @@ def connect_to_endpoint(url, headers, params, next_token=None):
     print("Endpoint Response Code: " + str(response.status_code))
     if response.status_code != 200:
         raise Exception(response.status_code, response.text)
+    if response.status_code == 503:
+        print("503 Error. Retrying in 15 mins.")
+        time.sleep(15*60)
+        connect_to_endpoint(url, headers, params, next_token)
+
     return response.json()
 
 

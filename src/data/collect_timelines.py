@@ -6,7 +6,9 @@ import time
 from tqdm import tqdm
 import os
 import datetime
+from requests import ConnectionError
 
+# THIS IS FAR FROM ROBUST. NEED TO CLEAN IT UP.
 
 def collect_timelines():
 
@@ -21,6 +23,7 @@ def collect_timelines():
 
     The function collects a maximum of 25 tweets/user/week.
     """
+
 
     keys = pd.read_csv('/home/sagar/keys/twitter-keys.csv')
     os.environ['TOKEN'] = keys['BEARER_TOKEN'][0]
@@ -46,11 +49,12 @@ def collect_timelines():
         for t in tweets:
             eu_users.append(t['author_id'])
 
+
     # trimming duplicates
     euphoria_users = list(set(eu_users))
 
-    iter_tg_users = tqdm(tg_users, ascii=True)
-    iter_eu_users = tqdm(euphoria_users, ascii=True)
+    iter_tg_users = tqdm(tg_users[3878:], ascii=True) #truncating due to error
+    iter_eu_users = tqdm(euphoria_users, ascii=True) # truncating due to error
 
     # Iterating over all the top gun users, and iterating over each week to ensure that at least one tweet in each time
     # window is collected by each user
@@ -58,48 +62,76 @@ def collect_timelines():
 
     for u in iter_tg_users:
 
-        start_tg = datetime.date(2022,4,15)
+        week0_tg = datetime.date(2022,4,15)
 
         week = 0
         while week < 12:
 
-            start_tg = start_tg + datetime.timedelta(weeks=week)
+            start_tg = week0_tg + datetime.timedelta(weeks=week)
             start_str = start_tg.strftime("%Y-%m-%dT%H:%M:%S%zZ")
             end = start_tg + datetime.timedelta(weeks=1)
             end_str = end.strftime("%Y-%m-%dT%H:%M:%S%zZ")
 
-            query = TweetCollector('tweets',
-                                   start_date=start_str,
-                                   end_date=end_str,
-                                   max_results=25,
-                                   ids=u)
+            try:
+                query = TweetCollector('tweets',
+                                       start_date=start_str,
+                                       end_date=end_str,
+                                       max_results=25,
+                                       ids=u)
 
-            top_gun_timelines = query('/data_users1/sagar/Euphoria-Project/top_gun_tweets/timelines.json')
+                top_gun_timelines = query('/data_users1/sagar/Euphoria-Project/top_gun_tweets/timelines_2.json')
+
+            except ConnectionError:
+                print("Connection Error. Retrying in 15 mins.")
+                time.sleep(15*60)
+
+                query = TweetCollector('tweets',
+                                       start_date=start_str,
+                                       end_date=end_str,
+                                       max_results=25,
+                                       ids=u)
+
+                top_gun_timelines = query('/data_users1/sagar/Euphoria-Project/top_gun_tweets/timelines_2.json')
+
 
             week += 1
             time.sleep(1)
 
     time.sleep(1)
 
+
     for u in iter_eu_users:
 
-        start_eu = datetime.date(2022,1,2)
+        week0_eu = datetime.date(2022,1,2)
 
         week = 0
         while week < 12:
 
-            start_eu = start_eu + datetime.timedelta(weeks=week)
+            start_eu = week0_eu + datetime.timedelta(weeks=week)
             start_str = start_eu.strftime("%Y-%m-%dT%H:%M:%S%zZ")
             end = start_eu + datetime.timedelta(weeks=1)
             end_str = end.strftime("%Y-%m-%dT%H:%M:%S%zZ")
 
-            query = TweetCollector('tweets',
-                                   start_date=start_str,
-                                   end_date=end_str,
-                                   max_results=25,
-                                   ids=u)
+            try:
+                query = TweetCollector('tweets',
+                                       start_date=start_str,
+                                       end_date=end_str,
+                                       max_results=25,
+                                       ids=u)
 
-            euphoria_timelines = query('/data_users1/sagar/Euphoria-Project/euphoria_tweets/timelines.json')
+                euphoria_timelines = query('/data_users1/sagar/Euphoria-Project/euphoria_tweets/timelines_2.json')
+
+            except ConnectionError:
+                print("Connection Error. Retrying in 15 mins.")
+                time.sleep(15*60)
+
+                query = TweetCollector('tweets',
+                                       start_date=start_str,
+                                       end_date=end_str,
+                                       max_results=25,
+                                       ids=u)
+
+            euphoria_timelines = query('/data_users1/sagar/Euphoria-Project/euphoria_tweets/timelines_2.json')
 
             week += 1
             time.sleep(1)
